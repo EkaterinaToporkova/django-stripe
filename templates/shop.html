@@ -1,0 +1,61 @@
+{% extends 'base-page.html' %}
+{% load static %}
+
+{% block title  %}
+Список продуктов
+{% endblock title %}
+
+{% block container  %}
+
+<div class="hero-wrap hero-bread" style="background-image: url('{% static 'img/bg-66.jpg' %}');">
+    <div class="container">
+        <div class="row no-gutters slider-text align-items-center justify-content-center">
+            <div class="col-md-9 ftco-animate text-center">
+                <h1 class="mb-0 bread">Продукты</h1>
+            </div>
+        </div>
+    </div>
+</div>
+
+<section class="ftco-section bg-light">
+    <div class="container-fluid">
+        <div class="row">
+            {% for product in object_list %}
+            <div class="col-sm col-md-6 col-lg-3 ftco-animate">
+                <div class="product">
+                    <a href="{% url 'detail' product.pk %}" class="img-prod"><img class="img-fluid" src="{{ product.image_url.url }}"
+                                                      alt="Colorlib Template">
+                    </a>
+                    <div class="text py-3 px-3">
+                        <h3 style="font-family:'Lato', Arial, sans-serif"><a href="{% url 'detail' product.pk %}">{{ product.name }}</a></h3>
+                        <div class="d-flex">
+                            <div class="pricing">
+                                <p class="price">
+                                    <span class="price-sale">{{ product.price }} р./{{ product.unit }}</span></p>
+                            </div>
+                        </div>
+                        <hr>
+                        <div class="quantity">
+                            <div class="input-group mb-3">
+                                <form method="post" action="#">
+                                    {% csrf_token %}
+                                    <h6 style="font-family:'Lato', Arial, sans-serif"><label class="form-label" for="id_quantity">Количество:</label>
+                                        <input type="number" name="quantity" value="1" min="1" required
+                                               id="id_quantity" style="width: 3em">
+                                    </h6>
+                                    <button type="submit">
+                                        <a href="#" class="add-to-cart"><span>Add to cart <i
+                                                class="ion-ios-add ml-1"></i></span></a>
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+{% endblock container %}
