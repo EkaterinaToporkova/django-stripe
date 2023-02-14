@@ -23,11 +23,11 @@
             {% for product in object_list %}
             <div class="col-sm col-md-6 col-lg-3 ftco-animate">
                 <div class="product">
-                    <a href="{% url 'detail' product.pk %}" class="img-prod"><img class="img-fluid" src="{{ product.image_url.url }}"
+                    <a href="{% url 'item' product.pk %}" class="img-prod"><img class="img-fluid" src="{{ product.image_url.url }}"
                                                       alt="Colorlib Template">
                     </a>
                     <div class="text py-3 px-3">
-                        <h3 style="font-family:'Lato', Arial, sans-serif"><a href="{% url 'detail' product.pk %}">{{ product.name }}</a></h3>
+                        <h3 style="font-family:'Lato', Arial, sans-serif"><a href="{% url 'item' product.pk %}">{{ product.name }}</a></h3>
                         <div class="d-flex">
                             <div class="pricing">
                                 <p class="price">
@@ -37,13 +37,14 @@
                         <hr>
                         <div class="quantity">
                             <div class="input-group mb-3">
-                                <form method="post" action="#">
+                                <form action="#" method="POST">
                                     {% csrf_token %}
-                                    <h6 style="font-family:'Lato', Arial, sans-serif"><label class="form-label" for="id_quantity">Количество:</label>
+                                    <h6 style="font-family:'Lato', Arial, sans-serif"><label class="form-label"
+                                                                                             for="id_quantity">Количество:</label>
                                         <input type="number" name="quantity" value="1" min="1" required
                                                id="id_quantity" style="width: 3em">
                                     </h6>
-                                    <button type="submit">
+                                    <button type="submit" id="checkout-button">
                                         <a href="#" class="add-to-cart"><span>Add to cart <i
                                                 class="ion-ios-add ml-1"></i></span></a>
                                     </button>
@@ -57,5 +58,6 @@
         </div>
     </div>
 </section>
+
 
 {% endblock container %}

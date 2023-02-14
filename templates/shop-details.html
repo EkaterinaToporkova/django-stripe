@@ -27,15 +27,15 @@
                         <tbody>
                         <tr class="text-center">
                             <td class="image-prod">
-                                <div class="img" style="background-image:url('{{ product.image_url.url }}');"></div>
+                                <div class="img" style="background-image:url('{{ item.image_url.url }}');"></div>
                             </td>
                             <td class="product-name">
-                                <h3 style="color:#17a2b8">{{ product.name }}</h3>
-                                <h3>{{ product.note }}</h3>
+                                <h3 style="color:#17a2b8">{{ item.name }}</h3>
+                                <h3>{{ item.note }}</h3>
                             </td>
-                            <td class="price">{{ product.price }} руб. / {{ product.unit }}</td>
+                            <td class="price">{{ item.price }} руб. / {{ item.unit }}</td>
                             <td>
-                                <form method="post" action="#">
+                                <form method="POST" action="{% url 'create-checkout-session' item.pk %}">
                                     {% csrf_token %}
                                     <div class="categories__post__item__text">
                                         <h6 style="font-family:'Lato', Arial, sans-serif"><label class="form-label"
@@ -44,8 +44,8 @@
                                                    id="id_quantity" style="width: 3em">
                                         </h6>
                                     </div>
-                                    <button type="submit">
-                                        <a href="#" class="add-to-cart"><span>Add to cart<i
+                                    <button type="button" id="checkout-button">
+                                        <a href="{% url 'create-checkout-session' item.pk %}" class="add-to-cart"><span>Add to cart<i
                                                 class="ion-ios-add ml-1"></i></span></a>
                                     </button>
                                 </form>
