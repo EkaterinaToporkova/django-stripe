@@ -312,9 +312,9 @@
                                                 <li><a href="#"><i class="icon-star"></i></a></li>
                                             </ul>
                                         </div>
-                                        <h4 class="product_name"><a href="#">{{item.name}}</a></h4>
+                                        <h4 class="product_name"><a href="{% url 'item' item.pk %}">{{item.name}}</a></h4>
                                         <div class="price_box">
-                                            <span class="current_price">{{item.price}}</span>
+                                            <span class="current_price">{{item.price}} {{item.unit}}.</span>
                                         </div>
                                     </div>
                                 </div>
