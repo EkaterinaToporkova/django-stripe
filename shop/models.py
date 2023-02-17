@@ -25,13 +25,3 @@ class Product_image(models.Model):
         return f'{self.product.name} image'
 
 
-class OrderDetail(models.Model):
-    id = models.BigAutoField(primary_key=True)
-    customer_email = models.EmailField(verbose_name='Customer Email')
-    product = models.ForeignKey(to=Item, verbose_name='Item', on_delete=models.PROTECT)
-    amount = models.IntegerField(verbose_name='amount')
-    stripe_payment_intent = models.CharField(max_length=200)
-    # This field can be changed as status
-    has_paid = models.BooleanField(default=False, verbose_name='payment status')
-    created_on = models.DateTimeField(auto_now_add=True)
-    updated_on = models.DateTimeField(auto_now_add=True)
