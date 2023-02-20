@@ -35,7 +35,7 @@
             </div>
             <div class="col-lg-6 col-md-6">
                 <div class="product_d_right">
-                    <form action="#">
+                    <form  action="{% url 'create-checkout-session' product.id %}" method="POST">
                         <h1><a href="#">{{object.name}}</a></h1>
                         <div class=" product_ratting">
                             <ul>
@@ -69,7 +69,6 @@
                         <div class="product_meta">
                             <span>Category: <a href="#">Clothing</a></span>
                         </div>
-
                     </form>
                     <div class="priduct_social">
                         <ul>
@@ -85,7 +84,6 @@
                                 linked</a></li>
                         </ul>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -805,7 +803,8 @@
     </div>
 </div>
 <!--brand area end-->
- <script type="text/javascript">
+
+<script type="text/javascript">
 const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
 
 // Create an instance of the Stripe object with your publishable API key
@@ -837,4 +836,5 @@ checkoutButton.addEventListener("click", function () {
     });
 });
 </script>
+
 {% endblock container %}

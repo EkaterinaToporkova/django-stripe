@@ -1,9 +1,12 @@
 import stripe
 from django.http import JsonResponse
+from django.shortcuts import redirect
 from django.views import View
 from django.views.generic import TemplateView, ListView
 from main import settings
 from shop.models import Item
+
+stripe.api_key = settings.STRIPE_SECRET_KEY
 
 
 class SuccessView(TemplateView):
@@ -51,12 +54,12 @@ class CreateCheckoutSessionView(View):
             line_items=[
                 {
                     'price_data': {
-                        'currency': 'usd',
-                        'unit_amount': product.price,
+                        'currency': 'rub',
+                        'unit_amount_decimal': product.price_unit,
                         'product_data': {
                             'name': product.name,
                             "description": product.note,
-                            "images": [{product.image_url}],
+                            "images": [product.image_url],
                         },
                     },
                     'quantity': 1,
@@ -69,6 +72,4 @@ class CreateCheckoutSessionView(View):
             success_url=YOUR_DOMAIN + '/success/',
             cancel_url=YOUR_DOMAIN + '/cancel/',
         )
-        return JsonResponse({
-            'id': checkout_session.id,
-        })
+        return redirect(checkout_session.url, code=303)
