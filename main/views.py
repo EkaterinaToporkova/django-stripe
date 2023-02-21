@@ -59,7 +59,7 @@ class CreateCheckoutSessionView(View):
                         'product_data': {
                             'name': product.name,
                             "description": product.note,
-                            "images": [product.image_url],
+                            #"images": [product.image_url],
                         },
                     },
                     'quantity': 1,
@@ -73,3 +73,14 @@ class CreateCheckoutSessionView(View):
             cancel_url=YOUR_DOMAIN + '/cancel/',
         )
         return redirect(checkout_session.url, code=303)
+
+
+def cart_view(request):
+    pass
+    # cart = Order.get_cart(request.user)
+    # items = cart.orderitem_set.all()
+    # context = {
+    #     'cart': cart,
+    #     'items': items
+    # }
+    # return render(request, 'shop/cart.html', context)
