@@ -13,3 +13,4 @@
 1. Framework Django 4.1.6
 2. Библиотека stripe 5.1.1
 3. SQLite
+4. Библиотека unittest.
