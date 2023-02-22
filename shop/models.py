@@ -1,3 +1,4 @@
+from django.db.models import Sum
 from django.utils import timezone
 
 from _decimal import Decimal
@@ -23,7 +24,7 @@ class Item(models.Model):
         ordering = ['pk']
 
     def __str__(self):
-        return f'name: {self.name}, price: {self.price},  image_url: {self.image_url}, pk: {self.code}'
+        return f'name: {self.name}, price: {self.price}, pk: {self.code}'
 
     @property
     def price_unit(self):
@@ -123,8 +124,9 @@ class OrderItem(models.Model):
         ordering = ['pk']
 
     def __str__(self):
-        return f'product: {self.product}, amount: {self.amount}'  # отображение в БД
+        return f'product: {self.product}, amount: {self.price}'  # отображение в БД
 
     @property
     def amount(self):  # перерасчет amount элемента с учетом количества и скидки
         return self.quantity * (self.price - self.discount)
+
