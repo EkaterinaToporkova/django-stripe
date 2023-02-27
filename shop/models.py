@@ -90,7 +90,7 @@ class Order(models.Model):
     @staticmethod
     def get_cart(user: User):  # корзина до каких-либо изменений
         cart = Order.objects.filter(user=user,
-                                    ordered=False,
+                                    status=Order.STATUS_CART
                                     ).first()
         if cart and (timezone.now() - cart.creation_time).days > 7:
             cart.delete()  # корзина удаляется, если ей больше 7 дней
@@ -98,7 +98,7 @@ class Order(models.Model):
 
         if not cart:  # если корзины не существует, то она создается
             cart = Order.objects.create(user=user,
-                                        ordered=False,
+                                        status=Order.STATUS_CART,
                                         amount=0
                                         )
         return cart
