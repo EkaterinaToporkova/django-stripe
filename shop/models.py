@@ -1,9 +1,10 @@
 from django.db.models import Sum
+from django.db.models.signals import post_save, post_delete
+from django.dispatch import receiver
 from django.utils import timezone
-
-from _decimal import Decimal
+from decimal import Decimal
 from django.contrib.auth.models import User
-from django.db import models
+from django.db import models, transaction
 
 
 class Item(models.Model):
@@ -42,7 +43,7 @@ class Product_image(models.Model):
 # таблица Платежи
 class Payment(models.Model):
     user = models.ForeignKey(User,
-                             on_delete=models.CASCADE)  # поле связано с табл. User, имя модели User, on_delete - удаление платежей
+                             on_delete=models.CASCADE)  # поле связано с табл. User, имя модели User
     amount = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)  # сумма платежа
     time = models.DateTimeField(auto_now_add=True)  # время создания платежа, заполняется автоматически
     comment = models.TextField(blank=True, null=True)  # комментарий к платежу
@@ -71,11 +72,11 @@ class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=32, choices=STATUS_CHOICES,
                               default=STATUS_CART)  # статус покупки, выбор из трех элементов
-    amount = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True)  # сумма заказа
+    amount = models.DecimalField(max_digits=20, decimal_places=2, blank=True, null=True,
+                                 verbose_name='amount(auto)')  # сумма заказа
     creation_time = models.DateTimeField(auto_now_add=True)  # время создания заказа, заполняется автоматически
     payment = models.ForeignKey(Payment, on_delete=models.PROTECT, blank=True,
                                 null=True)  # поле, связанное с платежами, которое совершит изменение статуса оплаты
-
     comment = models.TextField(blank=True, null=True)  # комментарий к заказу
 
     class Meta:
@@ -92,8 +93,8 @@ class Order(models.Model):
         cart = Order.objects.filter(user=user,
                                     status=Order.STATUS_CART
                                     ).first()
-        if cart and (timezone.now() - cart.creation_time).days > 7:
-            cart.delete()  # корзина удаляется, если ей больше 7 дней
+        if cart and (timezone.now() - cart.creation_time).days > 7:  # корзина удаляется, если ей больше 7 дней
+            cart.delete()
             cart = None
 
         if not cart:  # если корзины не существует, то она создается
@@ -110,6 +111,19 @@ class Order(models.Model):
             amount += item.amount  # увеличиваем сумму на значение amount, которое нашли в def amount() в OrderItem каждого элемента
         return amount
 
+    def make_order(self):
+        item = self.orderitem_set.all()
+        if item and self.status == Order.STATUS_CART:
+            self.status = Order.STATUS_WAITING_FOR_PAYMENT
+            self.save()
+
+    @staticmethod
+    def get_amount_of_unpaid_orders(user: User):
+        amount = Order.objects.filter(user=user,
+                                      status=Order.STATUS_WAITING_FOR_PAYMENT
+                                      ).aggregate(Sum('amount'))['amount__sum']
+        return amount or Decimal(0)
+
 
 # в этом классе все элементЫ, которые лежат в Корзине + перерасчет суммы всего заказа
 class OrderItem(models.Model):
@@ -124,9 +138,36 @@ class OrderItem(models.Model):
         ordering = ['pk']
 
     def __str__(self):
-        return f'product: {self.product}, amount: {self.price}'  # отображение в БД
+        return f'product: {self.product}, price: {self.price}'  # отображение в БД
 
     @property
     def amount(self):  # перерасчет amount элемента с учетом количества и скидки
         return self.quantity * (self.price - self.discount)
 
+
+@transaction.atomic()
+def auto_payment_unpaid_orders(user: User):  # автоплатеж неоплаченных заказов
+    unpaid_orders = Order.objects.filter(user=user,
+                                         status=Order.STATUS_WAITING_FOR_PAYMENT)
+    for order in unpaid_orders:
+        if Payment.get_balance(user) < order.amount:
+            break
+        order.payment = Payment.objects.all().last()
+        order.status = Order.STATUS_PAID
+        order.save()
+        Payment.objects.create(user=user,
+                               amount=-order.amount)
+
+
+@receiver(post_save, sender=OrderItem)  # после сохранения OrderItem, идет функция recalculate_order_amount_after_save()
+def recalculate_order_amount_after_save(sender, instance, **kwargs):  # instance - подает сигнал о сохранении
+    order = instance.order  # получим заказ, к которому был послан сигнал о сохранении
+    order.amount = order.get_amount()  # получаем сумму для этого заказа
+    order.save()  # сохраняем, чтобы отразить изменение в базе данных
+
+
+@receiver(post_delete, sender=OrderItem)  # сигнал, соответствующий удалению объекта из базы данных
+def recalculate_order_amount_after_delete(sender, instance, **kwargs):
+    order = instance.order
+    order.amount = order.get_amount()
+    order.save()
