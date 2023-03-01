@@ -36,7 +36,7 @@
             <div class="col-lg-6 col-md-6">
                 <div class="product_d_right">
                     <form  action="{% url 'create-checkout-session' product.id %}" method="POST">
-                        <h1><a href="#">{{object.name}}</a></h1>
+                        <h1><a href="#">{{product.name}}</a></h1>
                         <div class=" product_ratting">
                             <ul>
                                 <li><a href="#"><i class="icon-star"></i></a></li>
@@ -64,11 +64,18 @@
                             <ul>
                                 <li><a href="#" title="Add to wishlist">+ Add to Wishlist</a></li>
                                 <li><a href="#" title="Add to wishlist">+ Compare</a></li>
-                                <li><a href="#" title="Add to wishlist">+ Add to Cart</a></li>
                             </ul>
                         </div>
                         <div class="product_meta">
                             <span>Category: <a href="#">Clothing</a></span>
+                        </div>
+                    </form>
+                    <form method="post" action="{% url 'add_item_to_cart' product.pk %}">
+                        {% csrf_token %}
+                        <div class="product_variant quantity">
+                            <label>quantity</label>
+                            <input min="1" max="100" value="1" type="number" required id="id_quantity">
+                            <button class="button" type="submit">Add to cart</button>
                         </div>
                     </form>
                     <div class="priduct_social">
@@ -117,17 +124,7 @@
                     <div class="tab-content">
                         <div class="tab-pane fade show active" id="info" role="tabpanel">
                             <div class="product_info_content">
-                                <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam fringilla augue nec
-                                    est tristique auctor. Donec non est at libero vulputate rutrum. Morbi ornare
-                                    lectus quis justo gravida semper. Nulla tellus mi, vulputate adipiscing cursus
-                                    eu, suscipit id nulla.</p>
-                                <p>Pellentesque aliquet, sem eget laoreet ultrices, ipsum metus feugiat sem, quis
-                                    fermentum turpis eros eget velit. Donec ac tempus ante. Fusce ultricies massa
-                                    massa. Fusce aliquam, purus eget sagittis vulputate, sapien libero hendrerit
-                                    est, sed commodo augue nisi non neque. Lorem ipsum dolor sit amet, consectetur
-                                    adipiscing elit. Sed tempor, lorem et placerat vestibulum, metus nisi posuere
-                                    nisl, in accumsan elit odio quis mi. Cras neque metus, consequat et blandit et,
-                                    luctus a nunc. Etiam gravida vehicula tellus, in imperdiet ligula euismod eget.
+                                <p>{{ product.note }}
                                 </p>
                             </div>
                         </div>
@@ -296,7 +293,7 @@
                                 </div>
                                 <div class="action_links">
                                     <ul>
-                                        <li class="add_to_cart"><a href="cart.html" title="Add to cart"><i
+                                        <li class="add_to_cart"><a href="#" title="Add to cart"><i
                                                 class="icon-shopping-bag"></i></a></li>
                                         <li class="compare"><a href="#" title="Add to Compare"><i
                                                 class="icon-sliders"></i></a></li>
@@ -338,7 +335,7 @@
                                 </div>
                                 <div class="action_links">
                                     <ul>
-                                        <li class="add_to_cart"><a href="cart.html" title="Add to cart"><i
+                                        <li class="add_to_cart"><a href="#" title="Add to cart"><i
                                                 class="icon-shopping-bag"></i></a></li>
                                         <li class="compare"><a href="#" title="Add to Compare"><i
                                                 class="icon-sliders"></i></a></li>
@@ -380,7 +377,7 @@
                                 </div>
                                 <div class="action_links">
                                     <ul>
-                                        <li class="add_to_cart"><a href="cart.html" title="Add to cart"><i
+                                        <li class="add_to_cart"><a href="#" title="Add to cart"><i
                                                 class="icon-shopping-bag"></i></a></li>
                                         <li class="compare"><a href="#" title="Add to Compare"><i
                                                 class="icon-sliders"></i></a></li>
@@ -422,7 +419,7 @@
                                 </div>
                                 <div class="action_links">
                                     <ul>
-                                        <li class="add_to_cart"><a href="cart.html" title="Add to cart"><i
+                                        <li class="add_to_cart"><a href="#" title="Add to cart"><i
                                                 class="icon-shopping-bag"></i></a></li>
                                         <li class="compare"><a href="#" title="Add to Compare"><i
                                                 class="icon-sliders"></i></a></li>
@@ -464,7 +461,7 @@
                                 </div>
                                 <div class="action_links">
                                     <ul>
-                                        <li class="add_to_cart"><a href="cart.html" title="Add to cart"><i
+                                        <li class="add_to_cart"><a href="#" title="Add to cart"><i
                                                 class="icon-shopping-bag"></i></a></li>
                                         <li class="compare"><a href="#" title="Add to Compare"><i
                                                 class="icon-sliders"></i></a></li>
@@ -524,7 +521,7 @@
                                 </div>
                                 <div class="action_links">
                                     <ul>
-                                        <li class="add_to_cart"><a href="cart.html" title="Add to cart"><i
+                                        <li class="add_to_cart"><a href="#" title="Add to cart"><i
                                                 class="icon-shopping-bag"></i></a></li>
                                         <li class="compare"><a href="#" title="Add to Compare"><i
                                                 class="icon-sliders"></i></a></li>

@@ -1,10 +1,13 @@
 import stripe
+from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404, render
+from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import TemplateView, ListView
 from main import settings
-from shop.models import Item
+from main.forms import AddQuantityForm
+from shop.models import Item, Order, OrderItem
 
 stripe.api_key = settings.STRIPE_SECRET_KEY
 
@@ -75,12 +78,42 @@ class CreateCheckoutSessionView(View):
         return redirect(checkout_session.url, code=303)
 
 
+# @login_required(login_url=reverse_lazy(
+#     'register'))  # работу функции add_item_to_cart() может вызвать только залогиненный пользователь
+def add_item_to_cart(request, pk):
+    if request.method == 'POST':
+        quantity_form = AddQuantityForm(request.POST)
+        if quantity_form.is_valid():  # если форма прошла валидацию, то создаётся объект quantity
+            quantity = quantity_form.cleaned_data['quantity']
+            if quantity:
+                cart = Order.get_cart(
+                    request.user)  # метод get_cart способен обеспечить нужной корзиной - объектом cart
+                product = get_object_or_404(Item, pk=pk)
+                if OrderItem.objects.filter(product=product).exists():
+                    order_items = cart.orderitem_set.filter(product=product)
+                    for it in order_items:
+                        it.quantity += quantity
+                        it.save()
+                        cart.save()
+                else:
+                    # с помощью cart.orderitem_set.create() создаём
+                    # новый объект модели OrderItem
+                    cart.orderitem_set.create(product=product,
+                                              quantity=quantity,
+                                              price=product.price)
+
+                cart.save()  # фиксируем связь этого объекта с корзиной заказа
+                return redirect('cart_view')
+        else:
+            pass
+    return redirect(request.META['HTTP_REFERER'])
+
+
 def cart_view(request):
-    pass
-    # cart = Order.get_cart(request.user)
-    # items = cart.orderitem_set.all()
-    # context = {
-    #     'cart': cart,
-    #     'items': items
-    # }
-    # return render(request, 'shop/cart.html', context)
+    cart = Order.get_cart(request.user)
+    items = cart.orderitem_set.all()
+    context = {
+        'cart': cart,
+        'items': items
+    }
+    return render(request, 'shop/cart.html', context)

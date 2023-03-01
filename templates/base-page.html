@@ -119,13 +119,6 @@
                         <ul class="offcanvas_main_menu">
                             <li class="menu-item-has-children active">
                                 <a href="#">Home</a>
-                                <ul class="sub-menu">
-                                    <li><a href="index.html">Home 1</a></li>
-                                    <li><a href="index-2.html">Home 2</a></li>
-                                    <li><a href="index-3.html">Home 3</a></li>
-                                    <li><a href="index-4.html">Home 4</a></li>
-                                    <li><a href="index-5.html">Home 5</a></li>
-                                </ul>
                             </li>
                             <li class="menu-item-has-children">
                                 <a href="#">Shop</a>
@@ -144,7 +137,7 @@
                                     <li class="menu-item-has-children">
                                         <a href="#">other Pages</a>
                                         <ul class="sub-menu">
-                                            <li><a href="cart.html">cart</a></li>
+                                            <li><a href="{% url 'cart_view' %}">cart</a></li>
                                             <li><a href="wishlist.html">Wishlist</a></li>
                                             <li><a href="checkout.html">Checkout</a></li>
                                             <li><a href="my-account.html">my account</a></li>
@@ -289,7 +282,7 @@
                                     <ul class="dropdown_links">
                                         <li><a href="checkout.html">Checkout </a></li>
                                         <li><a href="my-account.html">My Account </a></li>
-                                        <li><a href="cart.html">Shopping Cart</a></li>
+                                        <li><a href="{% url 'cart_view">Shopping Cart</a></li>
                                         <li><a href="wishlist.html">Wishlist</a></li>
                                     </ul>
                                 </div>
@@ -532,7 +525,7 @@
                                                 </li>
                                                 <li><a href="#">other Pages</a>
                                                     <ul>
-                                                        <li><a href="cart.html">cart</a></li>
+                                                        <li><a href="{% url 'cart_view">cart</a></li>
                                                         <li><a href="wishlist.html">Wishlist</a></li>
                                                         <li><a href="checkout.html">Checkout</a></li>
                                                         <li><a href="my-account.html">my account</a></li>
@@ -654,7 +647,7 @@
                             <ul>
                                 <li><a href="my-account.html">My Account</a></li>
                                 <li><a href="contact.html">Contact</a></li>
-                                <li><a href="cart.html">Shopping cart</a></li>
+                                <li><a href="{% url 'cart_view">Shopping cart</a></li>
                                 <li><a href="checkout.html">Checkout</a></li>
                                 <li><a href="shop.html">Shop</a></li>
                                 <li><a href="#">Order History</a></li>
