@@ -3,8 +3,9 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import redirect, get_object_or_404, render
 from django.urls import reverse_lazy
+from django.utils.decorators import method_decorator
 from django.views import View
-from django.views.generic import TemplateView, ListView
+from django.views.generic import TemplateView, ListView, DeleteView
 from main import settings
 from main.forms import AddQuantityForm
 from shop.models import Item, Order, OrderItem
@@ -26,7 +27,7 @@ class ProductView(ListView):
 
     def get_context_data(self, **kwargs):
         products = Item.objects.all()
-        context = super(ProductView, self).get_context_data(**kwargs,)
+        context = super(ProductView, self).get_context_data(**kwargs, )
         context.update({
             "items": products,
         })
@@ -39,7 +40,7 @@ class ProductDetailView(TemplateView):
     def get_context_data(self, **kwargs):
         pk = self.kwargs.get("pk")
         product = Item.objects.get(pk=pk)
-        context = super(ProductDetailView, self).get_context_data(**kwargs,)
+        context = super(ProductDetailView, self).get_context_data(**kwargs, )
         context.update({
             "product": product,
             "STRIPE_PUBLIC_KEY": settings.STRIPE_PUBLIC_KEY
@@ -62,7 +63,7 @@ class CreateCheckoutSessionView(View):
                         'product_data': {
                             'name': product.name,
                             "description": product.note,
-                            #"images": [product.image_url],
+                            # "images": [product.image_url],
                         },
                     },
                     'quantity': 1,
@@ -116,4 +117,17 @@ def cart_view(request):
         'cart': cart,
         'items': items
     }
-    return render(request, 'shop/cart.html', context)
+    return render(request, 'cart.html', context)
+
+
+@method_decorator(login_required,
+                  name='dispatch')  # работу класса CartDeleteIem может вызвать только залогиненный пользователь
+class CartDeleteItem(DeleteView):
+    model = OrderItem
+    template_name = 'cart.html'
+    success_url = reverse_lazy('cart_view')
+
+    def get_queryset(self):
+        qs = super().get_queryset()
+        qs.filter(order__user=self.request.user)
+        return qs

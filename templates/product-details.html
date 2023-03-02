@@ -73,8 +73,8 @@
                     <form method="post" action="{% url 'add_item_to_cart' product.pk %}">
                         {% csrf_token %}
                         <div class="product_variant quantity">
-                            <label>quantity</label>
-                            <input min="1" max="100" value="1" type="number" required id="id_quantity">
+                            <label class="form-label" for="id_quantity">quantity</label>
+                            <input type="number" name="quantity" value="1" min="1" required id="id_quantity">
                             <button class="button" type="submit">Add to cart</button>
                         </div>
                     </form>
